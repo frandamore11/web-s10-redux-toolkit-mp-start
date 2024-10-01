@@ -3,69 +3,66 @@ import { createSlice } from '@reduxjs/toolkit'
 
 let id = 1
 const getNextId = () => id++
-const slice = createSlice({
-
-  name: 'quotes',
-  initialState: {
-    list: [
-      {
-        id: getNextId(),
-        quoteText: "Don't cry because it's over, smile because it happened.",
-        authorName: "Dr. Seuss",
-        apocryphal: false,
-      },
-      {
-        id: getNextId(),
-        quoteText: "So many books, so little time.",
-        authorName: "Frank Zappa",
-        apocryphal: false,
-      },
-      {
-        id: getNextId(),
-        quoteText: "Be yourself; everyone else is already taken.",
-        authorName: "Oscar Wilde",
-        apocryphal: false,
-      },
-    ],
-  },
-  reducers: {
-    displayAllQuotes(state, action){
-
+const initialState = {
+  displayAllQuotes: true,
+  highlightedQuote: null,
+  quotes: [
+    {
+      id: getNextId(),
+      quoteText: "Don't cry because it's over, smile because it happened.",
+      authorName: "Dr. Seuss",
+      apocryphal: false,
     },
-    highlightedQuote(state,action){
+    {
+      id: getNextId(),
+      quoteText: "So many books, so little time.",
+      authorName: "Frank Zappa",
+      apocryphal: false,
+    },
+    {
+      id: getNextId(),
+      quoteText: "Be yourself; everyone else is already taken.",
+      authorName: "Oscar Wilde",
+      apocryphal: false,
+    },
+  ],
+}
 
+export const quotesSlice = createSlice({
+  name:'quotes', 
+  initialState,
+  reducers: {
+    toggleVisibility(state,action) {
+      state.displayAllQuotes = !state.displayAllQuotes
+    }, 
+    deleteQuote(state,action) {
+      state.quotes = state.quotes.filter(qt => qt.id != action.payload)
+    }, 
+    ediQuoteAuthenticity(state,action) {
+      const quoteToEdit = state.quotes.find(qt => qt.id === action.payload)
+      quoteToEdit.apocryphal = !quoteToEdit.apocryphal
+    }, 
+    setHighlightedQuote(state,action) {
+      if(state.highlightedQuote === action.payload) {
+        state.highlightedQuote = null
+      } else {
+        state.highlightedQuote = action.payload
+      }
+    }, 
+    createQuote(state,action) {
+      state.quotes.push(action.payload)
     }
   }
 })
 
-
-// const initialState = {
-//   displayAllQuotes: true,
-//   highlightedQuote: null,
-//   quotes: [
-//     {
-//       id: getNextId(),
-//       quoteText: "Don't cry because it's over, smile because it happened.",
-//       authorName: "Dr. Seuss",
-//       apocryphal: false,
-//     },
-//     {
-//       id: getNextId(),
-//       quoteText: "So many books, so little time.",
-//       authorName: "Frank Zappa",
-//       apocryphal: false,
-//     },
-//     {
-//       id: getNextId(),
-//       quoteText: "Be yourself; everyone else is already taken.",
-//       authorName: "Oscar Wilde",
-//       apocryphal: false,
-//     },
-//   ],
-// }
-
-export default slice.reducer
-
 export const {
-  displayAllQuotes, highlightedQuote
-} = slice.actions
+  createQuote, 
+  toggleVisibility,
+  deleteQuote, 
+  ediQuoteAuthenticity, 
+  setHighlightedQuote,
+} = quotesSlice.actions
+
+export default quotesSlice.reducer
+
+
